@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta xmlns="http://exist-db.org/xquery/repo">
+    <description>XQuery Websocket Module</description>
+    <author>Vasilii Startcev</author>
+    <website/>
+    <status>beta</status>
+    <license>GNU LGPL v.2</license>
+    <copyright>true</copyright>
+    <type>library</type>
+</meta>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://exist-db.org/ns/expath-pkg">
+    <jar>commons-vfs2-2.0.jar</jar>
+    <jar>junrar-0.7-SNAPSHOT.jar</jar>
+    <jar>eXrar-0.1.0.jar</jar>
+    <java>
+        <namespace>http://exist-db.org/xquery/websocket</namespace>
+        <class>org.exist.xquery.modules.websocket.WebsocketModule</class>
+    </java>
+</package>
