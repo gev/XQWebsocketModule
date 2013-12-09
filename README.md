@@ -8,7 +8,7 @@ add
 
     <servlet>
         <servlet-name>XQWebSocket</servlet-name>
-        <servlet-class>ru.mcfr.eXist.module.WebSocket.servlet.WSServlet</servlet-class>
+        <servlet-class>org.exist.xquery.modules.websocket.WebsocketModule</servlet-class>
 
         <init-param>
              <param-name>default-xq-path</param-name>
