@@ -23,7 +23,7 @@ Functions
 
     ws:connect($map as map) as object
 
-Establish WebSockt conection.
+Establish WebSocket conection.
 
 $map keys:
 
@@ -34,6 +34,8 @@ $map keys:
     "onclose" := function($map as map) { $map("message") as xs:string, $map("close-code") as xs:integer }
 
     "onmessage" := function($message as xs:string) { () }
+    
+return WebSocket connection object
 
 
     ws:close($connection as object)
