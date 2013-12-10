@@ -174,6 +174,7 @@ public class WSFunctions extends BasicFunction {
         }
 
         if (isCalledAs(list_clients)) {
+            // return NPE
             ValueSequence res = new ValueSequence();
 
             for (OnTextMsg client : WebsocketModule.users)
