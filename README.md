@@ -73,3 +73,44 @@ Send a message to sequense of clients or connections
     ws:send-all($message as xs:string)
 
 Send a message to all clients
+
+
+Example
+=======
+on client side
+
+    xquery version "3.0";
+    
+    let $cache := cache:cache("websocket")
+    let $connection := cache:get($cache, "connection")
+    let $connection := if (empty($connection)) then 
+        let $c := ws:connect(map {
+            "url" := "ws://localhost:8080/exist/ws/test",
+            "onopen" := function() { util:log-system-out("is open") },
+            "onclose" := function($map) { 
+                util:log-system-out("is close with code: " || xs:string($map("close-code")) || " and message: " || $map("message")),
+                cache:clear($cache)
+            },
+            "onmessage" := function($msg) { util:log-system-out($msg) }
+        })
+        let $put := cache:put(cache:cache("websocket"), "connection", $c)
+        return $c
+    else $connection
+    return ws:send($connection, util:serialize(
+        element hello { },
+        ()
+    ))
+    
+on server side (ws-controller.xq)
+
+    xquery version "3.0";
+    
+    let $req := *
+    return
+    ws:send( ws:get-client($req/@from),
+        util:serialize(
+            $req, 
+            ()
+        )
+    )
+
