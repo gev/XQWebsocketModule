@@ -63,7 +63,7 @@ List all servlet connections in xml format:
         </connection>
     </ws-connection>
 
-
+.
 
     ws:send($users as object*, $message as xs:string)
 
