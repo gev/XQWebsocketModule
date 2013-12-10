@@ -153,27 +153,23 @@ public class WSFunctions extends BasicFunction {
         }
 
         if (isCalledAs(send_all)) {
-            for (OnTextMsg client : WebsocketModule.users) {
-                try {
-                    client.getInfo().connection.sendMessage(args[0].getStringValue());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            for (OnTextMsg client : WebsocketModule.users) try {
+                client.getInfo().connection.sendMessage(args[0].getStringValue());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
         if (isCalledAs(send)) {
             SequenceIterator users = args[0].iterate();
-            while (users.hasNext()) {
-                try {
-                    Object obj = users.nextItem().toJavaObject(Object.class);
-                    if (obj instanceof OnTextMsg)
-                        ((OnTextMsg) obj).getInfo().getConnection().sendMessage(args[1].getStringValue());
-                    else if (obj instanceof WebSocket.Connection)
-                        ((WebSocket.Connection) obj).sendMessage(args[1].getStringValue());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            while (users.hasNext()) try {
+                Object obj = users.nextItem().toJavaObject(Object.class);
+                if (obj instanceof OnTextMsg)
+                    ((OnTextMsg) obj).getInfo().getConnection().sendMessage(args[1].getStringValue());
+                else if (obj instanceof WebSocket.Connection)
+                    ((WebSocket.Connection) obj).sendMessage(args[1].getStringValue());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
