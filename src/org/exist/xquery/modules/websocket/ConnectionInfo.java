@@ -20,8 +20,8 @@ package org.exist.xquery.modules.websocket;
 
 import org.eclipse.jetty.websocket.WebSocket;
 import org.exist.dom.QName;
+import org.exist.memtree.DocumentImpl;
 import org.exist.memtree.MemTreeBuilder;
-import org.exist.xquery.value.NodeValue;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -36,7 +36,7 @@ import java.util.UUID;
  */
 public class ConnectionInfo {
     WebSocket.Connection connection;
-    NodeValue xmlInfo;
+    DocumentImpl xmlInfo;
     String uid = "";
 
     public ConnectionInfo(HttpServletRequest r) {
@@ -48,7 +48,7 @@ public class ConnectionInfo {
         this.connection = c;
     }
 
-    public NodeValue toNode(HttpServletRequest request) {
+    public DocumentImpl toNode(HttpServletRequest request) {
         MemTreeBuilder builder = new MemTreeBuilder();
         builder.startDocument();
         builder.startElement(new QName("ws-connection"), null);
@@ -85,6 +85,7 @@ public class ConnectionInfo {
         builder.endElement();
 
         builder.endElement();
+        builder.endDocument();
 
         return builder.getDocument();
     }
@@ -93,7 +94,7 @@ public class ConnectionInfo {
         return uid;
     }
 
-    public NodeValue toNode() {
+    public DocumentImpl toNode() {
         return xmlInfo;
     }
 

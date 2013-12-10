@@ -84,7 +84,6 @@ public class OnTextMsg implements WebSocket.OnTextMessage {
             Document doc = fromString(s);
             domToMemTree(doc.getDocumentElement(), builder);
 
-            builder.characters(s);
             builder.endElement();
             builder.endDocument();
             execute(builder.getDocument());
@@ -155,7 +154,7 @@ public class OnTextMsg implements WebSocket.OnTextMessage {
                     domToMemTree((Element) ch, builder);
                     break;
                 case Node.TEXT_NODE:
-                    builder.characters(ch.getTextContent());
+                    builder.characters(ch.getNodeValue());
                     break;
             }
 

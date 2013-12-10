@@ -174,10 +174,12 @@ public class WSFunctions extends BasicFunction {
         }
 
         if (isCalledAs(list_clients)) {
-            return new ValueSequence() {{
-                for (OnTextMsg client : WebsocketModule.users)
-                    add(client.getInfo().toNode());
-            }};
+            ValueSequence res = new ValueSequence();
+
+            for (OnTextMsg client : WebsocketModule.users)
+                res.addAll(client.getInfo().toNode());
+
+            return res;
         }
 
         if (isCalledAs(get_client)) {
