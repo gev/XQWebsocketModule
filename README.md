@@ -22,6 +22,7 @@ into your web.xml
 Functions
 ---------
 
+-
 ```xquery
 ws:connect($map as map) as object
 ```
@@ -38,25 +39,24 @@ $map keys:
 
 "onmessage" := function($message as xs:string) { () }
 ```
-    
 return WebSocket connection object
 
+-
 ```xquery
 ws:close($connection as object)
 ```
-
 Close connection
 
+-
 ```xquery
 ws:get-client($uid as xs:string) as object
 ```
-
 Get client from servlet connections
 
+-
 ```xquery
 ws:list-clients() as node()*
 ```
-
 List all servlet connections in xml format:
 
 ```xml
@@ -72,16 +72,16 @@ List all servlet connections in xml format:
 </ws-connection>
 ```
 
+-
 ```xquery
 ws:send($users as object*, $message as xs:string)
 ```
-
 Send a message to sequense of clients or connections
 
+-
 ```xquery
 ws:send-all($message as xs:string)
 ```
-
 Send a message to all clients
 
 
