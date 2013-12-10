@@ -51,6 +51,7 @@ Get client from servlet connections
     ws:list-clients() as node()*
 
 List all servlet connections in xml format:
+
     <ws-connection uid="" query="" path="">
         <headers>
             <h name="" value=""/>
@@ -61,6 +62,7 @@ List all servlet connections in xml format:
             <remote-port>{PORT}</remote-port>
         </connection>
     </ws-connection>
+
 
 
     ws:send($users as object*, $message as xs:string)
