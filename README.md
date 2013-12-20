@@ -107,10 +107,7 @@ let $connection := if (empty($connection)) then
     let $put := cache:put(cache:cache("websocket"), "connection", $c)
     return $c
 else $connection
-return ws:send($connection, util:serialize(
-    element hello { },
-    ()
-))
+return ws:send($connection, element hello { })
 ```
     
 on server side (ws-controller.xq)
@@ -120,11 +117,6 @@ xquery version "3.0";
 
 let $req := *
 return
-ws:send( ws:get-client($req/@from),
-    util:serialize(
-        $req, 
-        ()
-    )
-)
+    ws:send( ws:get-client($req/@from), $req )
 ```
 
