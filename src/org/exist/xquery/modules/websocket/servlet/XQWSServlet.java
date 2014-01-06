@@ -37,6 +37,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class XQWSServlet extends WebSocketServlet {
     static public String xqPath = "";
+    static public String maxIdleTime = "";
     static public BrokerPool brokerPool = null;
 
     public final Set users = new CopyOnWriteArraySet();
@@ -55,5 +56,6 @@ public class XQWSServlet extends WebSocketServlet {
             e.printStackTrace();
         }
         xqPath = getServletConfig().getInitParameter("default-xq-path");
+        maxIdleTime = getServletConfig().getInitParameter("max-idle-time");
     }
 }

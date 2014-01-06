@@ -26,9 +26,7 @@ import org.exist.storage.BrokerPool;
 import org.exist.storage.DBBroker;
 import org.exist.xquery.*;
 import org.exist.xquery.functions.map.MapType;
-import org.exist.xquery.value.FunctionReference;
-import org.exist.xquery.value.IntegerValue;
-import org.exist.xquery.value.StringValue;
+import org.exist.xquery.value.*;
 
 import java.util.ArrayList;
 
@@ -51,6 +49,8 @@ public class TextMessageWorker implements WebSocket.OnTextMessage {
 
     Subject subject = null;
 
+    Connection connection = null;
+
     public TextMessageWorker(XQueryContext context, final Subject subject, FunctionReference openFun, FunctionReference closeFun, FunctionReference msgFun) throws EXistException {
         onOpen = openFun;
         onClose = closeFun;
@@ -64,67 +64,60 @@ public class TextMessageWorker implements WebSocket.OnTextMessage {
     public void onMessage(final String message) {
         try {
             final XQueryContext cntx = context;
-            pool = BrokerPool.getInstance();
-            broker = pool.get(subject);
-            broker.getConfiguration().setProperty(XQueryContext.PROPERTY_XQUERY_RAISE_ERROR_ON_FAILED_RETRIEVAL, true);
-            XQuery service = broker.getXQueryService();
             onMessage.setContext(cntx);
             onMessage.setArguments(new ArrayList<Expression>() {{
-                add(new LiteralValue(context, new StringValue(message)));
+                MapType map = new MapType(cntx){{
+                    add(new StringValue("message"), new StringValue(message));
+                    add(new StringValue("connection"), new JavaObjectValue(connection));
+                }};
+                add(new LiteralValue(context, map));
             }});
-            service.execute(onMessage.getCall(), null);
+            callXQLambda(onMessage.getCall());
         } catch (XPathException e) {
             e.printStackTrace();
-        } catch (PermissionDeniedException e) {
-            e.printStackTrace();
-        } catch (EXistException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            pool.release(broker);
         }
     }
 
     @Override
-    public void onOpen(Connection connection) {
+    public void onOpen(final Connection connection) {
+        this.connection = connection;
         try {
             final XQueryContext cntx = context;
-            pool = BrokerPool.getInstance();
-            broker = pool.get(subject);
-            broker.getConfiguration().setProperty(XQueryContext.PROPERTY_XQUERY_RAISE_ERROR_ON_FAILED_RETRIEVAL, true);
-            XQuery service = broker.getXQueryService();
             onOpen.setContext(cntx);
-            service.execute(onOpen.getCall(), null);
+            onOpen.setArguments(new ArrayList<Expression>(){{
+                add(new LiteralValue(context, new JavaObjectValue(connection)));
+            }});
+            callXQLambda(onOpen.getCall());
         } catch (XPathException e) {
             e.printStackTrace();
-        } catch (PermissionDeniedException e) {
-            e.printStackTrace();
-        } catch (EXistException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            pool.release(broker);
         }
     }
 
     @Override
     public void onClose(final int closeCode, final String message) {
+        final XQueryContext cntx = context;
+        onClose.setContext(cntx);
         try {
-            final XQueryContext cntx = context;
+            onClose.setArguments(new ArrayList<Expression>() {{
+                MapType map = new MapType(cntx){{
+                    add(new StringValue("message"), new StringValue(message));
+                    add(new StringValue("close-code"), new IntegerValue(closeCode));
+                }};
+                add(new LiteralValue(cntx, map));
+            }});
+        } catch (XPathException e) {
+            e.printStackTrace();
+        }
+        callXQLambda(onClose.getCall());
+    }
+
+    private Sequence callXQLambda(FunctionCall fun) {
+        try {
             pool = BrokerPool.getInstance();
             broker = pool.get(subject);
             broker.getConfiguration().setProperty(XQueryContext.PROPERTY_XQUERY_RAISE_ERROR_ON_FAILED_RETRIEVAL, true);
             XQuery service = broker.getXQueryService();
-            onClose.setContext(cntx);
-            onClose.setArguments(new ArrayList<Expression>() {{
-                MapType map = new MapType(cntx);
-                map.add(new StringValue("message"), new StringValue(message));
-                map.add(new StringValue("close-code"), new IntegerValue(closeCode));
-                add(new LiteralValue(cntx, map));
-            }});
-            service.execute(onClose.getCall(), null);
+            return service.execute(fun, null);
         } catch (XPathException e) {
             e.printStackTrace();
         } catch (PermissionDeniedException e) {
@@ -136,5 +129,6 @@ public class TextMessageWorker implements WebSocket.OnTextMessage {
         } finally {
             pool.release(broker);
         }
+        return Sequence.EMPTY_SEQUENCE;
     }
 }

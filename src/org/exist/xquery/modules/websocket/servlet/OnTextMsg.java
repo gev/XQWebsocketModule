@@ -73,6 +73,14 @@ public class OnTextMsg implements WebSocket.OnTextMessage {
         return info;
     }
 
+    private void response(String data) {
+        try {
+            info.getConnection().sendMessage(data);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
     @Override
     public void onMessage(String s) {
         try {
@@ -89,10 +97,13 @@ public class OnTextMsg implements WebSocket.OnTextMessage {
             execute(builder.getDocument());
         } catch (XPathException e) {
             e.printStackTrace();
+            response(e.getMessage());
         } catch (PermissionDeniedException e) {
             e.printStackTrace();
+            response(e.getMessage());
         } catch (AuthenticationException e) {
             e.printStackTrace();
+            response(e.getMessage());
         }
 
     }
@@ -145,7 +156,7 @@ public class OnTextMsg implements WebSocket.OnTextMessage {
         NamedNodeMap attrs = e.getAttributes();
         for (int i = 0; i < attrs.getLength(); i++) {
             Node attr = attrs.item(i);
-            builder.addAttribute(new QName(attr.getNodeName()), attr.getTextContent());
+            builder.addAttribute(new QName(attr.getNodeName()), attr.getNodeValue());
         }
 
         for (Node ch = e.getFirstChild(); ch != null; ch = ch.getNextSibling())
