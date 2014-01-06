@@ -18,17 +18,24 @@
 
 package org.exist.xquery.modules.websocket;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketClient;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
+import org.exist.storage.serializers.Serializer;
+import org.exist.util.serializer.SAXSerializer;
+import org.exist.util.serializer.SerializerPool;
 import org.exist.xquery.*;
 import org.exist.xquery.functions.map.MapType;
 import org.exist.xquery.modules.websocket.servlet.OnTextMsg;
 import org.exist.xquery.value.*;
+import org.xml.sax.SAXException;
 
-import java.io.IOException;
+import javax.xml.transform.OutputKeys;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -53,6 +60,11 @@ public class WSFunctions extends BasicFunction {
 
     public static final FunctionParameterSequenceType MESSAGE = new FunctionParameterSequenceType(
             "message", Type.STRING, Cardinality.ONE,
+            ""
+    );
+
+    public static final FunctionParameterSequenceType XML_MESSAGE = new FunctionParameterSequenceType(
+            "xml-message", Type.NODE, Cardinality.ONE,
             ""
     );
 
@@ -89,6 +101,10 @@ public class WSFunctions extends BasicFunction {
 
     public final static FunctionDef send = functionDef("send", "send message to sequence of clients or connections",
             EMPTY, USERS, MESSAGE
+    );
+
+    public final static FunctionDef send_xml = functionDef("send", "send message to sequence of clients or connections",
+            EMPTY, USERS, XML_MESSAGE
     );
 
     public final static FunctionDef list_clients = functionDef("list-clients", "return clients in xml format",
@@ -170,6 +186,62 @@ public class WSFunctions extends BasicFunction {
                     ((WebSocket.Connection) obj).sendMessage(args[1].getStringValue());
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+
+        if (isCalledAs(send_xml)) {
+            SequenceIterator users = args[0].iterate();
+            SequenceIterator siNode = args[1].iterate();
+
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+            final SAXSerializer sax = (SAXSerializer) SerializerPool.getInstance().borrowObject(SAXSerializer.class);
+            Properties outputProperties = new Properties();
+            outputProperties.setProperty(Serializer.GENERATE_DOC_EVENTS, "false");
+            try
+            {
+                final String encoding = outputProperties.getProperty(OutputKeys.ENCODING, "UTF-8");
+                final Writer writer = new OutputStreamWriter(os, encoding);
+                sax.setOutput(writer, outputProperties);
+                final Serializer serializer = context.getBroker().getSerializer();
+                serializer.reset();
+                serializer.setProperties(outputProperties);
+                serializer.setSAXHandlers(sax, sax);
+
+                sax.startDocument();
+
+                while(siNode.hasNext())
+                {
+                    final NodeValue next = (NodeValue)siNode.nextItem();
+                    serializer.toSAX(next);
+                }
+
+                sax.endDocument();
+                writer.close();
+            } catch(final SAXException e) {
+                throw new XPathException(this, "A problem occurred while serializing the node set: " + e.getMessage(), e);
+            } catch (final IOException e) {
+                throw new XPathException(this, "A problem occurred while serializing the node set: " + e.getMessage(), e);
+            } finally {
+                SerializerPool.getInstance().returnObject(sax);
+            }
+
+            try {
+                String text = new String(
+                        os.toByteArray(),
+                        outputProperties.getProperty(OutputKeys.ENCODING, "UTF-8")
+                );
+                while (users.hasNext()) try {
+                    Object obj = users.nextItem().toJavaObject(Object.class);
+                    if (obj instanceof OnTextMsg)
+                        ((OnTextMsg) obj).getInfo().getConnection().sendMessage(text);
+                    else if (obj instanceof WebSocket.Connection)
+                        ((WebSocket.Connection) obj).sendMessage(text);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (UnsupportedEncodingException e) {
+                throw new XPathException(this, "A problem occurred while serializing the node set: " + e.getMessage(), e);
             }
         }
 

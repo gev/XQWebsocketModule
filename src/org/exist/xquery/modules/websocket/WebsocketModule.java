@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import static org.exist.xquery.modules.websocket.WSFunctions.*;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -42,12 +44,13 @@ public class WebsocketModule extends AbstractInternalModule {
     }
 
     private final static FunctionDef[] functions = {
-            WSFunctions.close,
-            WSFunctions.connect,
-            WSFunctions.get_client,
-            WSFunctions.list_clients,
-            WSFunctions.send,
-            WSFunctions.send_all
+            close,
+            connect,
+            get_client,
+            list_clients,
+            send,
+            send_xml,
+            send_all
     };
 
     public WebsocketModule(Map<String, List<? extends Object>> parameters) {
