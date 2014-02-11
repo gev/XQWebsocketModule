@@ -78,9 +78,9 @@ public class ConnectionInfo {
         builder.characters(request.getRemoteHost());
         builder.endElement();
 
-        builder.startElement(new QName("remote-port"), null);
-        builder.characters(String.valueOf(request.getRemotePort()));
-        builder.endElement();
+//        builder.startElement(new QName("remote-port"), null);
+//        builder.characters(String.valueOf(request.getRemotePort()));
+//        builder.endElement();
 
         builder.endElement();
 

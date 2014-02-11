@@ -26,7 +26,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="XQWebsocketModule" target="1.7" />
+      <module name="XQWebsocketModule" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>
