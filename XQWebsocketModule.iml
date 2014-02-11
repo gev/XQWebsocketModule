@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.exist-db:existdb-core:2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.exist-db:existdb-core:2.1" level="project" />
     <orderEntry type="library" name="Maven: org.exist-db:xmldb-api:1.0" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.7" level="project" />
@@ -39,15 +39,6 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: gnu-crypto:gnu-crypto:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: excalibur-cli:excalibur-cli:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:8.1.9.v20130131" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:8.1.9.v20130131" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:8.1.9.v20130131" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.orbit:javax.servlet:3.0.0.v201112011016" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-continuation:8.1.9.v20130131" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:8.1.9.v20130131" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:8.1.9.v20130131" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.9.v20130131" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.aggregate:jetty-websocket:8.1.9.v20130131" level="project" />
   </component>
 </module>
 

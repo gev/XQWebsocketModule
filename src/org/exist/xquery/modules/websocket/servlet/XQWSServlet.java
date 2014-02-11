@@ -56,6 +56,6 @@ public class XQWSServlet extends WebSocketServlet {
             e.printStackTrace();
         }
         xqPath = getServletConfig().getInitParameter("default-xq-path");
-        maxIdleTime = getServletConfig().getInitParameter("max-idle-time");
+//        maxIdleTime = getServletConfig().getInitParameter("max-idle-time");
     }
 }
